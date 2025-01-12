@@ -12,13 +12,14 @@ import telran.probes.dto.ProbeData;
 import telran.probes.dto.Range;
 import telran.probes.service.RangeProviderClient;
 
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 @SpringBootApplication
 @RequiredArgsConstructor
 @Slf4j
 public class AnalyzerAppl {
-    @Value("${app.analyzer.consumer.binding.name")
+    @Value("${app.analyzer.producer.binding.name")
     String producerBindingName;
 
     final RangeProviderClient service;
@@ -27,21 +28,30 @@ public class AnalyzerAppl {
         SpringApplication.run(AnalyzerAppl.class, args);
     }
     @Bean
-    Consumer<ProbeData> analyzerConsumer(){
+    Consumer<ProbeData> analyzerConsumer() {
         return probeData -> {
-            log.trace("received probe: {}", probeData);
+            log.trace("Received probe: {}", probeData);
             Range range = service.getRange(probeData.id());
-            if(probeData.value() < range.min() || probeData.value() > range.max()){
-                double deviation = Math.abs(probeData.value() < range.min()
-                ? probeData.value() - range.min()
-                : probeData.value() - range.max()
+            double deviation;
+            if (probeData.value() < range.min()) {
+                deviation = probeData.value() - range.min();
+            } else if (probeData.value() > range.max()) {
+                deviation = probeData.value() - range.max();
+            } else {
+                deviation = 0;
+            }
+            if (deviation != 0) {
+                log.debug("Deviation detected: {}", deviation);
+                DeviationData deviationData = new DeviationData(
+                        probeData.id(),
+                        deviation,
+                        probeData.value(),
+                        System.currentTimeMillis()
                 );
-                log.debug("deviation detected: {}", deviation);
-                DeviationData data = new DeviationData(probeData.id(), deviation, probeData.value(), probeData.timestamp());
-                bridge.send(producerBindingName, data);
-                log.debug("Deviation data {} send to {}", data, producerBindingName);
-            }else {
-                log.debug("Deviation is not detected");
+                bridge.send(producerBindingName,deviationData);
+                log.debug("Deviation data {} sent to {}", deviationData, producerBindingName);
+            } else {
+                log.debug("deviation is not detected");
             }
         };
     }
