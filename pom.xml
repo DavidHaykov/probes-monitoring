@@ -5,6 +5,7 @@
     <modules>
         <module>analyzer</module>
         <module>sensor-emails-provider</module>
+        <module>web-exception-master</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -64,10 +65,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream-test-support</artifactId>
