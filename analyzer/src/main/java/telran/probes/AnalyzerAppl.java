@@ -7,7 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
+import telran.probes.dto.DeviationData;
 import telran.probes.dto.ProbeData;
+import telran.probes.dto.Range;
 import telran.probes.service.RangeProviderClient;
 
 import java.util.function.Consumer;
@@ -28,10 +30,19 @@ public class AnalyzerAppl {
     Consumer<ProbeData> analyzerConsumer(){
         return probeData -> {
             log.trace("received probe: {}", probeData);
-            //todo
-            log.debug("deviation: {}");
-            //todo
-            log.debug("deviaton data {} send to {}" );
+            Range range = service.getRange(probeData.id());
+            if(probeData.value() < range.min() || probeData.value() > range.max()){
+                double deviation = Math.abs(probeData.value() < range.min()
+                ? probeData.value() - range.min()
+                : probeData.value() - range.max()
+                );
+                log.debug("deviation detected: {}", deviation);
+                DeviationData data = new DeviationData(probeData.id(), deviation, probeData.value(), probeData.timestamp());
+                bridge.send(producerBindingName, data);
+                log.debug("Deviation data {} send to {}", data, producerBindingName);
+            }else {
+                log.debug("Deviation is not detected");
+            }
         };
     }
 }
