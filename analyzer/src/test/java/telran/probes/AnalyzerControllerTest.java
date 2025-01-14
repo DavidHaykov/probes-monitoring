@@ -18,9 +18,11 @@ import org.springframework.messaging.support.GenericMessage;
 import telran.probes.dto.DeviationData;
 import telran.probes.dto.ProbeData;
 import telran.probes.dto.Range;
+import telran.probes.dto.SensorUpdateData;
 import telran.probes.service.RangeProviderClient;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -31,10 +33,13 @@ import static org.mockito.Mockito.when;
 class AnalyzerControllerTest {
     @MockBean
     RangeProviderClient client;
+    @MockBean
+    Consumer<SensorUpdateData> updateConsumer;
     @Autowired
     InputDestination producer;
     @Autowired
     OutputDestination consumer;
+    @Autowired
     ObjectMapper mapper;
 
     @Value("${app.analyzer.consumer.binding.name:analyzerConsumer-in-0")
