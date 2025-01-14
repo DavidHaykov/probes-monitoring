@@ -6,6 +6,8 @@
         <module>analyzer</module>
         <module>sensor-emails-provider</module>
         <module>web-exception-master</module>
+        <module>email-notifier</module>
+        <module>avg-reducer</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
