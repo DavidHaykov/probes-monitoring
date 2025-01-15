@@ -1,6 +1,5 @@
 package telran.probes.service;
 
-public interface EmailsProviderClient {
+public interface EmailsNotifierClient {
     String[] getEmails(long sensorId);
-    //todo
 }

@@ -6,7 +6,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -16,11 +15,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.integration.test.context.SpringIntegrationTest;
 import org.springframework.messaging.support.GenericMessage;
 import telran.probes.dto.DeviationData;
 import telran.probes.dto.SensorUpdateData;
-import telran.probes.service.EmailsProviderClient;
+import telran.probes.service.EmailsNotifierClient;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,7 +46,7 @@ class EmailNotifierControllerTest {
     InputDestination producer;
 
     @MockBean
-    EmailsProviderClient service;
+    EmailsNotifierClient service;
 
     @MockBean
     Consumer<SensorUpdateData> updateConsumer;
