@@ -16,16 +16,16 @@ import java.util.Arrays;
 public class EmailsNotifierClientImpl implements EmailsNotifierClient {
     private final RestTemplate rest = new RestTemplate();
 
-    @Value("app.range.provider.host:localhost:")
+    @Value("app.range.provider.host:localhost")
     String host;
-    @Value("app.range.provider.port:8080/")
+    @Value("app.range.provider.port:8080")
     int port;
-    @Value("app.range.provider.path:/emails")
+    @Value("app.range.provider.path:/sensor/emails")
     String path;
 
     @Override
     public String[] getEmails(long sensorId) {
-        String url = host + port + path + "/" + sensorId;
+        String url = host+ ":" + port + "/" + path + "/" + sensorId;
 
         try {
             String[] emails = rest.exchange(url, HttpMethod.GET, null, String[].class).getBody();
